@@ -18,4 +18,6 @@ fi
 
 # Start HDFS/Spark worker here
 
+hdfs --daemon start datanode
+
 bash

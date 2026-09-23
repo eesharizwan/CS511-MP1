@@ -34,4 +34,9 @@ fi
 
 # Start HDFS/Spark main here
 
+hdfs --daemon start namenode
+sleep 3
+
+hdfs --daemon start datanode
+
 bash

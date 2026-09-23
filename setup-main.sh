@@ -12,3 +12,5 @@ chmod 0600 ~/.ssh/authorized_keys
 ####################################################################################
 
 # Setup HDFS/Spark main here
+
+hdfs namenode -format -nonInteractive -force

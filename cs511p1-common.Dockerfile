@@ -20,3 +20,19 @@ RUN ssh-keygen -t rsa -P '' -f ~/.ssh/shared_rsa -C common && \
 # Setup HDFS/Spark resources here
 # (the PySpark skeleton of Part 3 also needs python3 on every node; Spark 3.4.1
 #  supports Python 3.7-3.11, so do not install a newer interpreter)
+
+RUN apt install --yes wget
+
+RUN wget -q https://archive.apache.org/dist/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz \
+    && tar -xzf hadoop-3.3.6.tar.gz -C /opt \
+    && rm hadoop-3.3.6.tar.gz
+
+ENV HADOOP_HOME=/opt/hadoop-3.3.6
+ENV HADOOP_CONF_DIR=/opt/hadoop-3.3.6/etc/hadoop
+ENV PATH=$PATH:/opt/hadoop-3.3.6/bin:/opt/hadoop-3.3.6/sbin
+ENV JAVA_HOME=/opt/java/openjdk
+
+COPY hadoop-config/core-site.xml $HADOOP_CONF_DIR/core-site.xml
+COPY hadoop-config/hdfs-site.xml $HADOOP_CONF_DIR/hdfs-site.xml
+COPY hadoop-config/hadoop-env.sh $HADOOP_CONF_DIR/hadoop-env.sh
+COPY hadoop-config/workers       $HADOOP_CONF_DIR/workers
