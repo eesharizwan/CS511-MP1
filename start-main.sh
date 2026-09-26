@@ -39,4 +39,8 @@ sleep 3
 
 hdfs --daemon start datanode
 
+$SPARK_HOME/sbin/start-master.sh
+sleep 3
+$SPARK_HOME/sbin/start-worker.sh spark://main:7077
+
 bash

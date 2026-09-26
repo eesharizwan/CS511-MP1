@@ -20,4 +20,6 @@ fi
 
 hdfs --daemon start datanode
 
+$SPARK_HOME/sbin/start-worker.sh spark://main:7077
+
 bash

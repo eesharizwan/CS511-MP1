@@ -36,3 +36,12 @@ COPY hadoop-config/core-site.xml $HADOOP_CONF_DIR/core-site.xml
 COPY hadoop-config/hdfs-site.xml $HADOOP_CONF_DIR/hdfs-site.xml
 COPY hadoop-config/hadoop-env.sh $HADOOP_CONF_DIR/hadoop-env.sh
 COPY hadoop-config/workers       $HADOOP_CONF_DIR/workers
+
+RUN wget -q https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz \
+    && tar -xzf spark-3.4.1-bin-hadoop3.tgz -C /opt \
+    && rm spark-3.4.1-bin-hadoop3.tgz
+
+ENV SPARK_HOME=/opt/spark-3.4.1-bin-hadoop3
+ENV PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+
+COPY spark-config/spark-env.sh $SPARK_HOME/conf/spark-env.sh
