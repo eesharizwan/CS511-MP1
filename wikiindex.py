@@ -48,7 +48,16 @@ def parse_article(line):
     instead of failing the job.
     """
     # TODO: implement.
-    raise NotImplementedError("parse_article")
+    # raise NotImplementedError("parse_article")
+    try: 
+        info = json.loads(line) #takes the single string line and attempts to parse it into a Python dictionary
+        if "id" in info and "text" in info:
+            return (info["id"], info["text"]) #if the line is valid JSON and contains the required id and text fields, it ignores 
+            # continuation: the extra data and returns only a tuple of (article_id, text)
+        return None
+    except (json.JSONDecodeError, TypeError): #if the line is invalid and throws an error, we can catch it and return None instead of
+    # continuation: crashing the program
+        return None
 
 
 def tokenize(text):
@@ -59,7 +68,14 @@ def tokenize(text):
     STOPWORDS. Repeated words are kept: the caller counts them.
     """
     # TODO: implement.
-    raise NotImplementedError("tokenize")
+    # raise NotImplementedError("tokenize")
+    text_in_lower = text.lower() #make the text in lowercase
+    tokens = TOKEN_PATTERN.findall(text_in_lower); #extract all valid words into a list while automatically 
+    # continuation: discarding punctuation and extra spaces
+    return [t for t in tokens #iterate through the extracted words and discard any token that is shorter than 2
+    # continuation: characters or belongs to the STOPWORDS list
+        if len(t)>= MIN_TOKEN_LENGTH and t not in STOPWORDS
+    ]
 
 
 def build_index(lines):
@@ -70,7 +86,12 @@ def build_index(lines):
     """
     # TODO: parse the lines, tokenize the text, count each (word, article_id)
     # pair, then group the counts by word.
-    raise NotImplementedError("build_index")
+    # raise NotImplementedError("build_index")
+    articles = lines.map(parse_article).filter(lambda x: x is not None) #parse lines, check every item and keep it only if x is not None
+    word_pairs = articles.flatMap(lambda article: [((word, article[0]), 1) for word in tokenize(article[1])]) #tokenize the text and add one occurrence for each word; flatMap flattens the list of tuples returned for each article
+    word_counts = word_pairs.reduceByKey(lambda a, b: a + b) #calculate the term frequency for each word in each document
+    postings = word_counts.map(lambda item: (item[0][0], (item[0][1], item[1]))) #rearrange the key-value pairs (grouping by word)
+    return postings.groupByKey() #group all tuples by word
 
 
 def format_record(word, postings):
